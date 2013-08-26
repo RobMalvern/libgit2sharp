@@ -11,7 +11,7 @@ namespace LibGit2Sharp
     /// </summary>
     public class Branch : ReferenceWrapper<Commit>
     {
-        private readonly Lazy<Branch> trackedBranch;
+        private readonly Core.Compat.Lazy<Branch> trackedBranch;
 
         /// <summary>
         /// Needed for mocking purposes.
@@ -46,7 +46,7 @@ namespace LibGit2Sharp
         private Branch(Repository repo, Reference reference, Func<Reference, string> canonicalNameSelector)
             : base(repo, reference, canonicalNameSelector)
         {
-            trackedBranch = new Lazy<Branch>(ResolveTrackedBranch);
+            trackedBranch = new Core.Compat.Lazy<Branch>(ResolveTrackedBranch);
         }
 
         /// <summary>

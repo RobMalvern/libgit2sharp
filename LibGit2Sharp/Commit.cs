@@ -24,8 +24,8 @@ namespace LibGit2Sharp
         private readonly ILazy<string> lazyEncoding;
 
         private readonly ParentsCollection parents;
-        private readonly Lazy<string> lazyShortMessage;
-        private readonly Lazy<IEnumerable<Note>> lazyNotes;
+        private readonly Core.Compat.Lazy<string> lazyShortMessage;
+        private readonly Core.Compat.Lazy<IEnumerable<Note>> lazyNotes;
 
         /// <summary>
         /// Needed for mocking purposes.
@@ -44,8 +44,8 @@ namespace LibGit2Sharp
             lazyMessage = group.AddLazy(Proxy.git_commit_message);
             lazyEncoding = group.AddLazy(RetrieveEncodingOf);
 
-            lazyShortMessage = new Lazy<string>(ExtractShortMessage);
-            lazyNotes = new Lazy<IEnumerable<Note>>(() => RetrieveNotesOfCommit(id).ToList());
+            lazyShortMessage = new Core.Compat.Lazy<string>(ExtractShortMessage);
+            lazyNotes = new Core.Compat.Lazy<IEnumerable<Note>>(() => RetrieveNotesOfCommit(id).ToList());
 
             parents = new ParentsCollection(repo, id);
         }
@@ -133,13 +133,13 @@ namespace LibGit2Sharp
 
         private class ParentsCollection : ICollection<Commit>
         {
-            private readonly Lazy<ICollection<Commit>> _parents;
-            private readonly Lazy<int> _count;
+            private readonly Core.Compat.Lazy<ICollection<Commit>> _parents;
+            private readonly Core.Compat.Lazy<int> _count;
 
             public ParentsCollection(Repository repo, ObjectId commitId)
             {
-                _count = new Lazy<int>(() => Proxy.git_commit_parentcount(repo.Handle, commitId));
-                _parents = new Lazy<ICollection<Commit>>(() => RetrieveParentsOfCommit(repo, commitId));
+                _count = new Core.Compat.Lazy<int>(() => Proxy.git_commit_parentcount(repo.Handle, commitId));
+                _parents = new Core.Compat.Lazy<ICollection<Commit>>(() => RetrieveParentsOfCommit(repo, commitId));
             }
 
             private ICollection<Commit> RetrieveParentsOfCommit(Repository repo, ObjectId commitId)

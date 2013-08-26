@@ -15,7 +15,7 @@ namespace LibGit2Sharp
     public class Network
     {
         private readonly Repository repository;
-        private readonly Lazy<RemoteCollection> remotes;
+        private readonly Core.Compat.Lazy<RemoteCollection> remotes;
 
         /// <summary>
         /// Needed for mocking purposes.
@@ -26,7 +26,7 @@ namespace LibGit2Sharp
         internal Network(Repository repository)
         {
             this.repository = repository;
-            remotes = new Lazy<RemoteCollection>(() => new RemoteCollection(repository));
+            remotes = new Core.Compat.Lazy<RemoteCollection>(() => new RemoteCollection(repository));
         }
 
         /// <summary>

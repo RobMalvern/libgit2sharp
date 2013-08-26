@@ -622,11 +622,11 @@ namespace LibGit2Sharp.Core
 
         #region git_graph_
 
-        public static Tuple<int?, int?> git_graph_ahead_behind(RepositorySafeHandle repo, Commit first, Commit second)
+        public static Compat.Tuple<int?, int?> git_graph_ahead_behind(RepositorySafeHandle repo, Commit first, Commit second)
         {
             if (first == null || second == null)
             {
-                return new Tuple<int?, int?>(null, null);
+                return new Compat.Tuple<int?, int?>(null, null);
             }
 
             GitOid oid1 = first.Id.Oid;
@@ -641,7 +641,7 @@ namespace LibGit2Sharp.Core
 
                 Ensure.ZeroResult(res);
 
-                return new Tuple<int?, int?>((int)ahead, (int)behind);
+                return new Compat.Tuple<int?, int?>((int)ahead, (int)behind);
             }
         }
 
@@ -1765,7 +1765,7 @@ namespace LibGit2Sharp.Core
 
         #region git_revparse_
 
-        public static Tuple<GitObjectSafeHandle, ReferenceSafeHandle> git_revparse_ext(RepositorySafeHandle repo, string objectish)
+        public static Compat.Tuple<GitObjectSafeHandle, ReferenceSafeHandle> git_revparse_ext(RepositorySafeHandle repo, string objectish)
         {
             using (ThreadAffinity())
             {
@@ -1786,7 +1786,7 @@ namespace LibGit2Sharp.Core
                         break;
                 }
 
-                return new Tuple<GitObjectSafeHandle, ReferenceSafeHandle>(obj, reference);
+                return new Compat.Tuple<GitObjectSafeHandle, ReferenceSafeHandle>(obj, reference);
             }
         }
 

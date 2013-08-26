@@ -9,7 +9,7 @@ namespace LibGit2Sharp
     /// </summary>
     public class TreeEntryDefinition : IEquatable<TreeEntryDefinition>
     {
-        private Lazy<GitObject> target;
+        private Core.Compat.Lazy<GitObject> target;
 
         private static readonly LambdaEqualityHelper<TreeEntryDefinition> equalityHelper =
             new LambdaEqualityHelper<TreeEntryDefinition>(x => x.Mode, x => x.TargetType, x => x.TargetId);
@@ -50,7 +50,7 @@ namespace LibGit2Sharp
                            Mode = treeEntry.Mode,
                            TargetType = treeEntry.TargetType,
                            TargetId = treeEntry.TargetId,
-                           target = new Lazy<GitObject>(() => treeEntry.Target)
+                           target = new Core.Compat.Lazy<GitObject>(() => treeEntry.Target)
                        };
         }
 
@@ -61,7 +61,7 @@ namespace LibGit2Sharp
                            Mode = mode,
                            TargetType = TreeEntryTargetType.Blob,
                            TargetId = blob.Id,
-                           target = new Lazy<GitObject>(() => blob)
+                           target = new Core.Compat.Lazy<GitObject>(() => blob)
                        };
         }
 
@@ -83,7 +83,7 @@ namespace LibGit2Sharp
                            Mode = Mode.GitLink,
                            TargetType = TreeEntryTargetType.GitLink,
                            TargetId = objectId,
-                           target = new Lazy<GitObject>(() => { throw new InvalidOperationException("Shouldn't be necessary."); }),
+                           target = new Core.Compat.Lazy<GitObject>(() => { throw new InvalidOperationException("Shouldn't be necessary."); }),
                        };
         }
 
@@ -94,7 +94,7 @@ namespace LibGit2Sharp
                            Mode = Mode.Directory,
                            TargetType = TreeEntryTargetType.Tree,
                            TargetId = tree.Id,
-                           target = new Lazy<GitObject>(() => tree)
+                           target = new Core.Compat.Lazy<GitObject>(() => tree)
                        };
         }
 

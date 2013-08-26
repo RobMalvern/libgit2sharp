@@ -13,9 +13,9 @@ namespace LibGit2Sharp
     {
         private readonly ObjectId parentTreeId;
         private readonly Repository repo;
-        private readonly Lazy<GitObject> target;
+        private readonly Core.Compat.Lazy<GitObject> target;
         private readonly ObjectId targetOid;
-        private readonly Lazy<string> path;
+        private readonly Core.Compat.Lazy<string> path;
 
         private static readonly LambdaEqualityHelper<TreeEntry> equalityHelper =
             new LambdaEqualityHelper<TreeEntry>(x => x.Name, x => x.parentTreeId);
@@ -35,11 +35,11 @@ namespace LibGit2Sharp
             GitObjectType treeEntryTargetType = Proxy.git_tree_entry_type(obj);
             TargetType = treeEntryTargetType.ToTreeEntryTargetType();
 
-            target = new Lazy<GitObject>(RetrieveTreeEntryTarget);
+            target = new Core.Compat.Lazy<GitObject>(RetrieveTreeEntryTarget);
 
             Mode = Proxy.git_tree_entry_attributes(obj);
             Name = Proxy.git_tree_entry_name(obj);
-            path = new Lazy<string>(() => System.IO.Path.Combine(parentPath.Native, Name));
+            path = new Core.Compat.Lazy<string>(() => System.IO.Path.Combine(parentPath.Native, Name));
         }
 
         /// <summary>

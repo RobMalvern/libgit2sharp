@@ -17,7 +17,7 @@ namespace LibGit2Sharp
     public class NoteCollection : IEnumerable<Note>
     {
         private readonly Repository repo;
-        private readonly Lazy<string> defaultNamespace;
+        private readonly Core.Compat.Lazy<string> defaultNamespace;
 
         /// <summary>
         /// Needed for mocking purposes.
@@ -28,7 +28,7 @@ namespace LibGit2Sharp
         internal NoteCollection(Repository repo)
         {
             this.repo = repo;
-            defaultNamespace = new Lazy<string>(RetrieveDefaultNamespace);
+            defaultNamespace = new Core.Compat.Lazy<string>(RetrieveDefaultNamespace);
         }
 
         #region Implementation of IEnumerable

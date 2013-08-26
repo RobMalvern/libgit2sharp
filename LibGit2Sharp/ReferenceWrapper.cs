@@ -17,7 +17,7 @@ namespace LibGit2Sharp
         /// The repository.
         /// </summary>
         protected readonly Repository repo;
-        private readonly Lazy<TObject> objectBuilder;
+        private readonly Core.Compat.Lazy<TObject> objectBuilder;
 
         private static readonly LambdaEqualityHelper<ReferenceWrapper<TObject>> equalityHelper =
             new LambdaEqualityHelper<ReferenceWrapper<TObject>>(x => x.CanonicalName, x => x.TargetObject);
@@ -41,7 +41,7 @@ namespace LibGit2Sharp
 
             this.repo = repo;
             canonicalName = canonicalNameSelector(reference);
-            objectBuilder = new Lazy<TObject>(() => RetrieveTargetObject(reference));
+            objectBuilder = new Core.Compat.Lazy<TObject>(() => RetrieveTargetObject(reference));
         }
 
         /// <summary>

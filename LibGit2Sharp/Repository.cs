@@ -22,22 +22,22 @@ namespace LibGit2Sharp
         private readonly bool isBare;
         private readonly BranchCollection branches;
         private readonly CommitLog commits;
-        private readonly Lazy<Configuration> config;
+        private readonly Core.Compat.Lazy<Configuration> config;
         private readonly RepositorySafeHandle handle;
         private readonly Index index;
         private readonly ReferenceCollection refs;
         private readonly TagCollection tags;
         private readonly StashCollection stashes;
-        private readonly Lazy<RepositoryInformation> info;
+        private readonly Core.Compat.Lazy<RepositoryInformation> info;
         private readonly Diff diff;
         private readonly NoteCollection notes;
-        private readonly Lazy<ObjectDatabase> odb;
-        private readonly Lazy<Network> network;
+        private readonly Core.Compat.Lazy<ObjectDatabase> odb;
+        private readonly Core.Compat.Lazy<Network> network;
         private readonly Stack<IDisposable> toCleanup = new Stack<IDisposable>();
         private readonly Ignore ignore;
         private readonly SubmoduleCollection submodules;
-        private static readonly Lazy<string> versionRetriever = new Lazy<string>(RetrieveVersion);
-        private readonly Lazy<PathCase> pathCase;
+        private static readonly Core.Compat.Lazy<string> versionRetriever = new Core.Compat.Lazy<string>(RetrieveVersion);
+        private readonly Core.Compat.Lazy<PathCase> pathCase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Repository"/> class, providing ooptional behavioral overrides through <paramref name="options"/> parameter.
@@ -105,18 +105,18 @@ namespace LibGit2Sharp
                 branches = new BranchCollection(this);
                 tags = new TagCollection(this);
                 stashes = new StashCollection(this);
-                info = new Lazy<RepositoryInformation>(() => new RepositoryInformation(this, isBare));
+                info = new Core.Compat.Lazy<RepositoryInformation>(() => new RepositoryInformation(this, isBare));
                 config =
-                    new Lazy<Configuration>(
+                    new Core.Compat.Lazy<Configuration>(
                         () =>
                         RegisterForCleanup(new Configuration(this, configurationGlobalFilePath, configurationXDGFilePath,
                                                              configurationSystemFilePath)));
-                odb = new Lazy<ObjectDatabase>(() => new ObjectDatabase(this));
+                odb = new Core.Compat.Lazy<ObjectDatabase>(() => new ObjectDatabase(this));
                 diff = new Diff(this);
                 notes = new NoteCollection(this);
                 ignore = new Ignore(this);
-                network = new Lazy<Network>(() => new Network(this));
-                pathCase = new Lazy<PathCase>(() => new PathCase(this));
+                network = new Core.Compat.Lazy<Network>(() => new Network(this));
+                pathCase = new Core.Compat.Lazy<PathCase>(() => new PathCase(this));
                 submodules = new SubmoduleCollection(this);
 
                 EagerlyLoadTheConfigIfAnyPathHaveBeenPassed(options);

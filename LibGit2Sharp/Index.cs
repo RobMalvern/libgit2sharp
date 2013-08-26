@@ -250,14 +250,14 @@ namespace LibGit2Sharp
             //TODO: Move() should throw when:
             // - Moving a directory under a file
 
-            IDictionary<Tuple<string, FileStatus>, Tuple<string, FileStatus>> batch = PrepareBatch(sourcePaths, destinationPaths);
+            IDictionary<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>> batch = PrepareBatch(sourcePaths, destinationPaths);
 
             if (batch.Count == 0)
             {
                 throw new ArgumentNullException("sourcePaths");
             }
 
-            foreach (KeyValuePair<Tuple<string, FileStatus>, Tuple<string, FileStatus>> keyValuePair in batch)
+            foreach (KeyValuePair<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>> keyValuePair in batch)
             {
                 string sourcePath = keyValuePair.Key.Item1;
                 string destPath = keyValuePair.Value.Item1;
@@ -283,7 +283,7 @@ namespace LibGit2Sharp
             }
 
             string wd = repo.Info.WorkingDirectory;
-            foreach (KeyValuePair<Tuple<string, FileStatus>, Tuple<string, FileStatus>> keyValuePair in batch)
+            foreach (KeyValuePair<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>> keyValuePair in batch)
             {
                 string from = keyValuePair.Key.Item1;
                 string to = keyValuePair.Value.Item1;
@@ -426,27 +426,27 @@ namespace LibGit2Sharp
             }
         }
 
-        private IDictionary<Tuple<string, FileStatus>, Tuple<string, FileStatus>> PrepareBatch(IEnumerable<string> leftPaths, IEnumerable<string> rightPaths)
+        private IDictionary<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>> PrepareBatch(IEnumerable<string> leftPaths, IEnumerable<string> rightPaths)
         {
-            IDictionary<Tuple<string, FileStatus>, Tuple<string, FileStatus>> dic = new Dictionary<Tuple<string, FileStatus>, Tuple<string, FileStatus>>();
+            IDictionary<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>> dic = new Dictionary<Core.Compat.Tuple<string, FileStatus>, Core.Compat.Tuple<string, FileStatus>>();
 
             IEnumerator<string> leftEnum = leftPaths.GetEnumerator();
             IEnumerator<string> rightEnum = rightPaths.GetEnumerator();
 
             while (Enumerate(leftEnum, rightEnum))
             {
-                Tuple<string, FileStatus> from = BuildFrom(leftEnum.Current);
-                Tuple<string, FileStatus> to = BuildFrom(rightEnum.Current);
+                Core.Compat.Tuple<string, FileStatus> from = BuildFrom(leftEnum.Current);
+                Core.Compat.Tuple<string, FileStatus> to = BuildFrom(rightEnum.Current);
                 dic.Add(from, to);
             }
 
             return dic;
         }
 
-        private Tuple<string, FileStatus> BuildFrom(string path)
+        private Core.Compat.Tuple<string, FileStatus> BuildFrom(string path)
         {
             string relativePath = repo.BuildRelativePathFrom(path);
-            return new Tuple<string, FileStatus>(relativePath, RetrieveStatus(relativePath));
+            return new Core.Compat.Tuple<string, FileStatus>(relativePath, RetrieveStatus(relativePath));
         }
 
         private static bool Enumerate(IEnumerator<string> leftEnum, IEnumerator<string> rightEnum)

@@ -90,7 +90,7 @@ namespace LibGit2Sharp.Core
             }
         }
 
-        protected class LazyWrapper<TType> : Lazy<TType>, ILazy<TType>
+        protected class LazyWrapper<TType> : Compat.Lazy<TType>, ILazy<TType>
         {
             public LazyWrapper(Func<TType> evaluator)
                 : base(evaluator)

@@ -72,7 +72,7 @@ namespace LibGit2Sharp
                 return this;
             }
 
-            Tuple<string, string> segments = ExtractPosixLeadingSegment(treeEntryPath);
+            Core.Compat.Tuple<string, string> segments = ExtractPosixLeadingSegment(treeEntryPath);
 
             if (segments.Item2 == null)
             {
@@ -122,7 +122,7 @@ namespace LibGit2Sharp
                     typeof(TreeEntryDefinition).Name, typeof(ObjectDatabase).Name, typeof(Tree).Name));
             }
 
-            Tuple<string, string> segments = ExtractPosixLeadingSegment(targetTreeEntryPath);
+            Core.Compat.Tuple<string, string> segments = ExtractPosixLeadingSegment(targetTreeEntryPath);
 
             if (segments.Item2 != null)
             {
@@ -271,7 +271,7 @@ namespace LibGit2Sharp
 
             using (var builder = new TreeBuilder())
             {
-                var builtTreeEntryDefinitions = new List<Tuple<string, TreeEntryDefinition>>(entries.Count);
+                var builtTreeEntryDefinitions = new List<Core.Compat.Tuple<string, TreeEntryDefinition>>(entries.Count);
 
                 foreach (KeyValuePair<string, TreeEntryDefinition> kvp in entries)
                 {
@@ -288,7 +288,7 @@ namespace LibGit2Sharp
 
                     Blob blob = transient.Builder(repository.ObjectDatabase);
                     TreeEntryDefinition ted2 = TreeEntryDefinition.From(blob, ted.Mode);
-                    builtTreeEntryDefinitions.Add(new Tuple<string, TreeEntryDefinition>(name, ted2));
+                    builtTreeEntryDefinitions.Add(new Core.Compat.Tuple<string, TreeEntryDefinition>(name, ted2));
 
                     builder.Insert(name, ted2);
                 }
@@ -328,7 +328,7 @@ namespace LibGit2Sharp
             {
                 Ensure.ArgumentNotNullOrEmptyString(treeEntryPath, "treeEntryPath");
 
-                Tuple<string, string> segments = ExtractPosixLeadingSegment(treeEntryPath);
+                Core.Compat.Tuple<string, string> segments = ExtractPosixLeadingSegment(treeEntryPath);
 
                 if (segments.Item2 != null)
                 {
@@ -341,7 +341,7 @@ namespace LibGit2Sharp
             }
         }
 
-        private static Tuple<string, string> ExtractPosixLeadingSegment(FilePath targetPath)
+        private static Core.Compat.Tuple<string, string> ExtractPosixLeadingSegment(FilePath targetPath)
         {
             string[] segments = targetPath.Posix.Split(new[] { '/' }, 2);
 
@@ -350,7 +350,7 @@ namespace LibGit2Sharp
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "'{0}' is not a valid path.", targetPath));
             }
 
-            return new Tuple<string, string>(segments[0], segments.Length == 2 ? segments[1] : null);
+            return new Core.Compat.Tuple<string, string>(segments[0], segments.Length == 2 ? segments[1] : null);
         }
 
         private class TreeBuilder : IDisposable
