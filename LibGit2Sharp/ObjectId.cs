@@ -8,7 +8,7 @@ namespace LibGit2Sharp
     /// <summary>
     /// Uniquely identifies a <see cref="GitObject"/>.
     /// </summary>
-    public class ObjectId : IEquatable<ObjectId>
+    public sealed class ObjectId : IEquatable<ObjectId>
     {
         private readonly GitOid oid;
         private const int rawSize = 20;
@@ -17,7 +17,7 @@ namespace LibGit2Sharp
         /// <summary>
         /// Size of the string-based representation of a SHA-1.
         /// </summary>
-        protected const int HexSize = rawSize * 2;
+        private const int HexSize = rawSize * 2;
 
         private const string hexDigits = "0123456789abcdef";
         private static readonly byte[] reverseHexDigits = BuildReverseHexDigits();
@@ -85,7 +85,7 @@ namespace LibGit2Sharp
         /// <summary>
         /// Gets the sha.
         /// </summary>
-        public virtual string Sha
+        public string Sha
         {
             get { return sha; }
         }
@@ -296,6 +296,53 @@ namespace LibGit2Sharp
             }
 
             return objectId.All(c => hexDigits.Contains(c.ToString(CultureInfo.InvariantCulture)));
+        }
+
+        /// <summary>
+        /// Determine whether the beginning of this instance matches the
+        /// <paramref name="len"/> first nibbles of <paramref name="rawId"/>.
+        /// </summary>
+        /// <param name="rawId">The byte array to compare the <see cref="ObjectId"/> against.</param>
+        /// <param name="len">The number of nibbles from <paramref name="rawId"/> </param>
+        /// <returns></returns>
+        public bool StartsWith(byte[] rawId, int len)
+        {
+            Ensure.ArgumentNotNull(rawId, "rawId");
+
+            if (len < 1 || len > HexSize)
+            {
+                throw new ArgumentOutOfRangeException("len");
+            }
+
+            if (len > rawId.Length * 2)
+            {
+                throw new ArgumentOutOfRangeException("len", "len exceeds the size of rawId");
+            }
+
+            bool match = true;
+
+            int length = len >> 1;
+            for (int i = 0; i < length; i++)
+            {
+                if (RawId[i] != rawId[i])
+                {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (match && ((len & 1) == 1))
+            {
+                var a = RawId[length] >> 4;
+                var b = rawId[length] >> 4;
+
+                if (a != b)
+                {
+                    match = false;
+                }
+            }
+
+            return match;
         }
     }
 }

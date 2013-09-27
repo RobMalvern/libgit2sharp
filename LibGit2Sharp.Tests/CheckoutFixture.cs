@@ -361,9 +361,9 @@ namespace LibGit2Sharp.Tests
 
             using (var repo = new Repository(repoPath))
             {
-                Assert.True(repo.Info.IsHeadOrphaned);
+                Assert.True(repo.Info.IsHeadUnborn);
 
-                Assert.Throws<OrphanedHeadException>(() => repo.Checkout(repo.Head));
+                Assert.Throws<UnbornBranchException>(() => repo.Checkout(repo.Head));
             }
         }
 
@@ -938,7 +938,7 @@ namespace LibGit2Sharp.Tests
                 repo.Checkout(originalBranch);
                 Assert.False(repo.Index.RetrieveStatus().IsDirty);
 
-                repo.CheckoutPaths(checkoutFrom, new string[] { path }, CheckoutModifiers.None, null, null);
+                repo.CheckoutPaths(checkoutFrom, new[] { path });
 
                 Assert.Equal(expectedStatus, repo.Index.RetrieveStatus(path));
                 Assert.Equal(1, repo.Index.RetrieveStatus().Count());
@@ -957,12 +957,33 @@ namespace LibGit2Sharp.Tests
                 ResetAndCleanWorkingDirectory(repo);
                 Assert.False(repo.Index.RetrieveStatus().IsDirty);
 
-                repo.CheckoutPaths("i-do-numbers", checkoutPaths, CheckoutModifiers.None, null, null);
+                repo.CheckoutPaths("i-do-numbers", checkoutPaths);
 
                 foreach (string checkoutPath in checkoutPaths)
                 {
                     Assert.Equal(FileStatus.Added, repo.Index.RetrieveStatus(checkoutPath));
                 }
+            }
+        }
+
+        [Fact]
+        public void CannotCheckoutPathsWithEmptyOrNullPathArgument()
+        {
+            string repoPath = CloneStandardTestRepo();
+
+            using (var repo = new Repository(repoPath))
+            {
+                // Set the working directory to the current head
+                ResetAndCleanWorkingDirectory(repo);
+                Assert.False(repo.Index.RetrieveStatus().IsDirty);
+
+                // Passing null 'paths' parameter should throw
+                Assert.Throws(typeof(ArgumentNullException),
+                    () => repo.CheckoutPaths("i-do-numbers", null));
+
+                // Passing empty list should do nothing
+                repo.CheckoutPaths("i-do-numbers", Enumerable.Empty<string>());
+                Assert.False(repo.Index.RetrieveStatus().IsDirty);
             }
         }
 
@@ -984,7 +1005,8 @@ namespace LibGit2Sharp.Tests
 
                 Assert.True(repo.Index.RetrieveStatus().IsDirty);
 
-                repo.CheckoutPaths("HEAD", new string[] { fileName }, CheckoutModifiers.Force, null, null);
+                var opts = new CheckoutOptions { CheckoutModifiers = CheckoutModifiers.Force };
+                repo.CheckoutPaths("HEAD", new[] { fileName }, opts);
 
                 Assert.False(repo.Index.RetrieveStatus().IsDirty);
             }

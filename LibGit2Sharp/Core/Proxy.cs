@@ -1047,6 +1047,18 @@ namespace LibGit2Sharp.Core
             return (res == 1);
         }
 
+        public static ICollection<TResult> git_odb_foreach<TResult>(
+            ObjectDatabaseSafeHandle odb,
+            Func<IntPtr, TResult> resultSelector)
+        {
+            return git_foreach(
+                resultSelector,
+                c => NativeMethods.git_odb_foreach(
+                    odb,
+                    (x, p) => c(x, p),
+                    IntPtr.Zero));
+        }
+
         public static void git_odb_free(IntPtr odb)
         {
             NativeMethods.git_odb_free(odb);
@@ -1224,24 +1236,6 @@ namespace LibGit2Sharp.Core
                 Ensure.ZeroResult(res);
 
                 return ref_out;
-            }
-        }
-
-        public static ReferenceSafeHandle git_reference_resolve(ReferenceSafeHandle reference)
-        {
-            using (ThreadAffinity())
-            {
-                ReferenceSafeHandle resolvedHandle;
-                int res = NativeMethods.git_reference_resolve(out resolvedHandle, reference);
-
-                if (res == (int)GitErrorCode.NotFound)
-                {
-                    return null;
-                }
-
-                Ensure.ZeroResult(res);
-
-                return resolvedHandle;
             }
         }
 
@@ -1562,9 +1556,9 @@ namespace LibGit2Sharp.Core
             NativeMethods.git_repository_free(repo);
         }
 
-        public static bool git_repository_head_orphan(RepositorySafeHandle repo)
+        public static bool git_repository_head_unborn(RepositorySafeHandle repo)
         {
-            return RepositoryStateChecker(repo, NativeMethods.git_repository_head_orphan);
+            return RepositoryStateChecker(repo, NativeMethods.git_repository_head_unborn);
         }
 
         public static IndexSafeHandle git_repository_index(RepositorySafeHandle repo)
@@ -1984,7 +1978,7 @@ namespace LibGit2Sharp.Core
         /// Returns a handle to the corresponding submodule,
         /// or an invalid handle if a submodule is not found.
         /// </summary>
-        public static SubmoduleSafeHandle git_submodule_lookup(RepositorySafeHandle repo, string name)
+        public static SubmoduleSafeHandle git_submodule_lookup(RepositorySafeHandle repo, FilePath name)
         {
             using (ThreadAffinity())
             {

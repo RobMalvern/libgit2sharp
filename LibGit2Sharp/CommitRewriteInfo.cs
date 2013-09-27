@@ -3,7 +3,7 @@ namespace LibGit2Sharp
     /// <summary>
     /// Commit metadata when rewriting history
     /// </summary>
-    public class CommitRewriteInfo
+    public sealed class CommitRewriteInfo
     {
         /// <summary>
         /// The author to be used for the new commit
@@ -37,7 +37,7 @@ namespace LibGit2Sharp
 
         /// <summary>
         /// Build a <see cref="CommitRewriteInfo"/> from the <see cref="Commit"/> passed in,
-        /// optionally overriding some of its properties 
+        /// optionally overriding some of its properties
         /// </summary>
         /// <param name="commit">The <see cref="Commit"/> whose information is to be copied</param>
         /// <param name="author">Optional override for the author</param>

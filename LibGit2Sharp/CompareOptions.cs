@@ -3,7 +3,7 @@ namespace LibGit2Sharp
     /// <summary>
     /// Options to define file comparison behavior.
     /// </summary>
-    public class CompareOptions
+    public sealed class CompareOptions
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="CompareOptions"/> class.
@@ -12,6 +12,7 @@ namespace LibGit2Sharp
         {
             ContextLines = 3;
             InterhunkLines = 0;
+            SkipPatchBuilding = false;
         }
 
         /// <summary>
@@ -25,5 +26,11 @@ namespace LibGit2Sharp
         /// (Default = 0)
         /// </summary>
         public int InterhunkLines { get; set; }
+
+        /// <summary>
+        /// Flag to skip patch building. May be used if only file name and status required.
+        /// (Default = false)
+        /// </summary>
+        internal bool SkipPatchBuilding { get; set; }
     }
 }

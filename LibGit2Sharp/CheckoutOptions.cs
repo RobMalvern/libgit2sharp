@@ -1,23 +1,25 @@
-﻿using System;
+﻿using LibGit2Sharp.Handlers;
 
 namespace LibGit2Sharp
 {
     /// <summary>
-    /// Options controlling Checkout behavior.
+    /// Collection of parameters controlling Checkout behavior.
     /// </summary>
-    [Flags]
-    [Obsolete("This type will be removed in the next release.")]
-    public enum CheckoutOptions
+    public sealed class CheckoutOptions
     {
         /// <summary>
-        /// No checkout flags - use default behavior.
+        /// Options controlling checkout behavior.
         /// </summary>
-        None = 0,
+        public CheckoutModifiers CheckoutModifiers { get; set; }
 
         /// <summary>
-        /// Proceed with checkout even if the index or the working tree differs from HEAD.
-        /// This will throw away local changes.
+        /// Callback method to report checkout progress updates through.
         /// </summary>
-        Force,
+        public CheckoutProgressHandler OnCheckoutProgress { get; set; }
+
+        /// <summary>
+        /// Options to manage checkout notifications.
+        /// </summary>
+        public CheckoutNotificationOptions CheckoutNotificationOptions { get; set; }
     }
 }

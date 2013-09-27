@@ -218,7 +218,7 @@ namespace LibGit2Sharp.Tests.TestHelpers
             };
         }
 
-        protected static string Touch(string parent, string file, string content = null)
+        protected static string Touch(string parent, string file, string content = null, Encoding encoding = null)
         {
             string filePath = Path.Combine(parent, file);
             string dir = Path.GetDirectoryName(filePath);
@@ -226,25 +226,9 @@ namespace LibGit2Sharp.Tests.TestHelpers
 
             Directory.CreateDirectory(dir);
 
-            File.WriteAllText(filePath, content ?? string.Empty, Encoding.ASCII);
+            File.WriteAllText(filePath, content ?? string.Empty, encoding ?? Encoding.ASCII);
 
             return filePath;
-        }
-
-        protected static void AssertReflogEntryIsCreated(IEnumerable<ReflogEntry> reflog, string targetSha, 
-            string logMessage, string fromSha = null)
-        {
-            var reflogEntry = reflog.First();
-
-            if (!string.IsNullOrEmpty(fromSha))
-            {
-                Assert.Equal(fromSha, reflogEntry.From.Sha);
-            }
-
-            Assert.Equal(targetSha, reflogEntry.To.Sha);
-            Assert.NotNull(reflogEntry.Commiter.Email);
-            Assert.NotNull(reflogEntry.Commiter.Name);
-            Assert.Equal(logMessage, reflogEntry.Message);
         }
 
         protected string Expected(string filename)
@@ -255,6 +239,32 @@ namespace LibGit2Sharp.Tests.TestHelpers
         protected string Expected(string filenameFormat, params object[] args)
         {
             return Expected(string.Format(CultureInfo.InvariantCulture, filenameFormat, args));
+        }
+
+        protected static void AssertRefLogEntry(Repository repo, string canonicalName,
+                                                ObjectId to, string message, ObjectId @from = null,
+                                                Signature committer = null)
+        {
+            var reflogEntry = repo.Refs.Log(canonicalName).First();
+
+            Assert.Equal(to, reflogEntry.To);
+            Assert.Equal(message, reflogEntry.Message);
+            Assert.Equal(@from ?? ObjectId.Zero, reflogEntry.From);
+
+            if (committer == null)
+            {
+                Assert.NotNull(reflogEntry.Commiter.Email);
+                Assert.NotNull(reflogEntry.Commiter.Name);
+            }
+            else
+            {
+                Assert.Equal(committer, reflogEntry.Commiter);
+            }
+        }
+
+        protected static void EnableRefLog(Repository repository, bool enable = true)
+        {
+            repository.Config.Set("core.logAllRefUpdates", enable);
         }
     }
 }

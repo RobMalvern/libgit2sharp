@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -13,7 +14,7 @@ namespace LibGit2Sharp
     /// Provides methods to directly work against the Git object database
     /// without involving the index nor the working directory.
     /// </summary>
-    public class ObjectDatabase
+    public class ObjectDatabase : IEnumerable<GitObject>
     {
         private readonly Repository repo;
         private readonly ObjectDatabaseSafeHandle handle;
@@ -31,6 +32,33 @@ namespace LibGit2Sharp
 
             repo.RegisterForCleanup(handle);
         }
+
+        #region Implementation of IEnumerable
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator{T}"/> object that can be used to iterate through the collection.</returns>
+        public virtual IEnumerator<GitObject> GetEnumerator()
+        {
+            ICollection<GitOid> oids = Proxy.git_odb_foreach(handle,
+                ptr => (GitOid) Marshal.PtrToStructure(ptr, typeof (GitOid)));
+
+            return oids
+                .Select(gitOid => repo.Lookup<GitObject>(new ObjectId(gitOid)))
+                .GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator"/> object that can be used to iterate through the collection.</returns>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
 
         /// <summary>
         /// Determines if the given object can be found in the object database.
@@ -122,20 +150,6 @@ namespace LibGit2Sharp
         /// <summary>
         /// Inserts a <see cref="Blob"/> into the object database, created from the content of a data provider.
         /// </summary>
-        /// <param name="reader">The reader that will provide the content of the blob to be created.</param>
-        /// <param name="hintpath">The hintpath is used to determine what git filters should be applied to the object before it can be placed to the object database.</param>
-        /// <returns>The created <see cref="Blob"/>.</returns>
-        [Obsolete("This method will be removed in the next release. Please use CreateBlob(Stream, string) instead.")]
-        public virtual Blob CreateBlob(BinaryReader reader, string hintpath = null)
-        {
-            Ensure.ArgumentNotNull(reader, "reader");
-
-            return CreateBlob(reader.BaseStream, hintpath);
-        }
-
-        /// <summary>
-        /// Inserts a <see cref="Blob"/> into the object database, created from the content of a data provider.
-        /// </summary>
         /// <param name="stream">The stream from which will be read the content of the blob to be created.</param>
         /// <param name="hintpath">The hintpath is used to determine what git filters should be applied to the object before it can be placed to the object database.</param>
         /// <param name="numberOfBytesToConsume">The number of bytes to consume from the stream.</param>
@@ -143,7 +157,7 @@ namespace LibGit2Sharp
         public virtual Blob CreateBlob(Stream stream, string hintpath = null, int? numberOfBytesToConsume = null)
         {
             Ensure.ArgumentNotNull(stream, "stream");
-            
+
             if (!stream.CanRead)
             {
                 throw new ArgumentException("The stream cannot be read from.", "stream");
@@ -195,20 +209,6 @@ namespace LibGit2Sharp
             ObjectId commitId = Proxy.git_commit_create(repo.Handle, referenceName, author, committer, prettifiedMessage, tree, parentIds);
 
             return repo.Lookup<Commit>(commitId);
-        }
-
-        /// <summary>
-        /// Inserts a <see cref="TagAnnotation"/> into the object database, pointing to a specific <see cref="GitObject"/>.
-        /// </summary>
-        /// <param name="name">The name.</param>
-        /// <param name="target">The <see cref="GitObject"/> being pointed at.</param>
-        /// <param name="tagger">The tagger.</param>
-        /// <param name="message">The message.</param>
-        /// <returns>The created <see cref="TagAnnotation"/>.</returns>
-        [Obsolete("This method will be removed in the next release. Please use CreateTagAnnontation(string, GitObject, Signature, string) instead.")]
-        public virtual TagAnnotation CreateTag(string name, GitObject target, Signature tagger, string message)
-        {
-            return CreateTagAnnotation(name, target, tagger, message);
         }
 
         /// <summary>

@@ -192,7 +192,7 @@ namespace LibGit2Sharp.Tests
             using (var repo = new Repository(BareTestRepoPath))
             {
                 foreach (Commit commit in repo.Commits.QueryBy(new CommitFilter
-                                                                    { 
+                                                                    {
                                                                         Since = "a4a7dce85cf63874e984719f4fdd239f5145052f",
                                                                         SortBy = CommitSortStrategies.Time
                                                                     }))
@@ -480,7 +480,7 @@ namespace LibGit2Sharp.Tests
                 var blob = commit["1/branch_file.txt"].Target as Blob;
                 Assert.NotNull(blob);
 
-                Assert.Equal("hi\n", blob.ContentAsUtf8());
+                Assert.Equal("hi\n", blob.ContentAsText());
             }
         }
 
@@ -631,7 +631,7 @@ namespace LibGit2Sharp.Tests
 
                 var author = Constants.Signature;
 
-                const string shortMessage = "Initial egotistic commit"; 
+                const string shortMessage = "Initial egotistic commit";
                 const string commitMessage = shortMessage + "\n\nOnly the coolest commits from us";
 
                 Commit commit = repo.Commit(commitMessage, author, author);
@@ -640,7 +640,7 @@ namespace LibGit2Sharp.Tests
                 AssertBlobContent(commit[relativeFilepath], "nulltoken\n");
 
                 Assert.Equal(0, commit.Parents.Count());
-                Assert.False(repo.Info.IsHeadOrphaned);
+                Assert.False(repo.Info.IsHeadUnborn);
 
                 // Assert a reflog entry is created on HEAD
                 Assert.Equal(1, repo.Refs.Log("HEAD").Count());
@@ -694,7 +694,7 @@ namespace LibGit2Sharp.Tests
         private static void AssertBlobContent(TreeEntry entry, string expectedContent)
         {
             Assert.Equal(TreeEntryTargetType.Blob, entry.TargetType);
-            Assert.Equal(expectedContent, ((Blob)(entry.Target)).ContentAsUtf8());
+            Assert.Equal(expectedContent, ((Blob)(entry.Target)).ContentAsText());
         }
 
         private static void AddCommitToRepo(string path)
@@ -773,11 +773,11 @@ namespace LibGit2Sharp.Tests
 
                 AssertCommitHasBeenAmended(repo, amendedCommit, mergedCommit);
 
-                // Assert a reflog entry is created
-                var reflogEntry = repo.Refs.Log("HEAD").First();
-                Assert.Equal(amendedCommit.Committer, reflogEntry.Commiter);
-                Assert.Equal(amendedCommit.Id, reflogEntry.To);
-                Assert.Equal(string.Format("commit (amend): {0}", commitMessage), reflogEntry.Message);
+                AssertRefLogEntry(repo, "HEAD",
+                                  amendedCommit.Id,
+                                  string.Format("commit (amend): {0}", commitMessage),
+                                  mergedCommit.Id,
+                                  amendedCommit.Committer);
             }
         }
 
@@ -804,7 +804,7 @@ namespace LibGit2Sharp.Tests
 
             using (var repo = new Repository(repoPath))
             {
-                Assert.Throws<OrphanedHeadException>(() => repo.Commit("I can not amend anything !:(", Constants.Signature, Constants.Signature, true));
+                Assert.Throws<UnbornBranchException>(() => repo.Commit("I can not amend anything !:(", Constants.Signature, Constants.Signature, true));
             }
         }
 

@@ -75,6 +75,8 @@
     <Compile Include="CommitFilter.cs" />
     <Compile Include="CommitSortStrategies.cs" />
     <Compile Include="CompareOptions.cs" />
+    <Compile Include="UnbornBranchException.cs" />
+    <Compile Include="LockedFileException.cs" />
     <Compile Include="Core\GitRepositoryInitOptions.cs" />
     <Compile Include="Core\HistoryRewriter.cs" />
     <Compile Include="Core\GitStrArrayIn.cs" />
@@ -92,7 +94,9 @@
     <Compile Include="Core\Handles\NullRepositorySafeHandle.cs" />
     <Compile Include="GitLink.cs" />
     <Compile Include="Core\RepositoryOpenFlags.cs" />
+    <Compile Include="RewriteHistoryOptions.cs" />
     <Compile Include="StashModifiers.cs" />
+    <Compile Include="TreeDefinitionExtensions.cs" />
     <Compile Include="TreeEntryTargetType.cs" />
     <Compile Include="UnmatchedPathException.cs" />
     <Compile Include="Core\Handles\ReflogEntrySafeHandle.cs" />
@@ -106,7 +110,6 @@
     <Compile Include="Core\GitRemoteHead.cs" />
     <Compile Include="ReflogEntry.cs" />
     <Compile Include="Stash.cs" />
-    <Compile Include="StashOptions.cs" />
     <Compile Include="OrphanedHeadException.cs" />
     <Compile Include="StashCollection.cs" />
     <Compile Include="ExplicitPathsOptions.cs" />
@@ -223,13 +226,11 @@
     <Compile Include="Core\GitIndexEntry.cs" />
     <Compile Include="GitObject.cs" />
     <Compile Include="Core\GitObjectType.cs" />
-    <Compile Include="GitSortOptions.cs" />
     <Compile Include="Core\LambdaEqualityHelper.cs" />
     <Compile Include="ICommitLog.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="IndexEntry.cs" />
     <Compile Include="Core\Handles\IndexSafeHandle.cs" />
-    <Compile Include="Filter.cs" />
     <Compile Include="IQueryableCommitLog.cs" />
     <Compile Include="Core\LookUpOptions.cs" />
     <Compile Include="Mode.cs" />

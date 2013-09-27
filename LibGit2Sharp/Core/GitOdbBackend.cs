@@ -110,8 +110,8 @@ namespace LibGit2Sharp.Core
         /// <param name="type">[in] The type of the object.</param>
         /// <returns>0 if successful; an error code otherwise.</returns>
         public delegate int write_callback(
-            ref GitOid oid,
             IntPtr backend,
+            ref GitOid oid,
             IntPtr data,
             UIntPtr len,
             GitObjectType type);
@@ -182,7 +182,7 @@ namespace LibGit2Sharp.Core
         /// <param name="data">The arbitrary parameter given to foreach_callback.</param>
         /// <returns>A non-negative result indicates the enumeration should continue. Otherwise, the enumeration should stop.</returns>
         public delegate int foreach_callback_callback(
-            ref GitOid oid,
+            IntPtr oid,
             IntPtr data);
     }
 }

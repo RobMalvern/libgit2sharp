@@ -68,7 +68,7 @@ namespace LibGit2Sharp.Tests
 
                 Assert.NotNull(blob);
                 Assert.Equal("dc53d4c6b8684c21b0b57db29da4a2afea011565", blob.Sha);
-                Assert.Equal("I'm a new file\n", blob.ContentAsUtf8());
+                Assert.Equal("I'm a new file\n", blob.ContentAsText());
 
                 var fetchedBlob = repo.Lookup<Blob>(blob.Id);
                 Assert.Equal(blob, fetchedBlob);
@@ -398,6 +398,23 @@ namespace LibGit2Sharp.Tests
                 // ...but exists in the odb.
                 var fetched = repo.Lookup<TagAnnotation>(tag.Id);
                 Assert.Equal(tag, fetched);
+            }
+        }
+
+        [Fact]
+        public void CanEnumerateTheGitObjectsFromBareRepository()
+        {
+            using (var repo = new Repository(BareTestRepoPath))
+            {
+                int count = 0;
+
+                foreach (var obj in repo.ObjectDatabase)
+                {
+                    Assert.NotNull(obj);
+                    count++;
+                }
+
+                Assert.True(count >= 1683);
             }
         }
     }

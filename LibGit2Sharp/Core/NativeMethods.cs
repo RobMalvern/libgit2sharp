@@ -579,6 +579,16 @@ namespace LibGit2Sharp.Core
         [DllImport(libgit2)]
         internal static extern int git_odb_exists(ObjectDatabaseSafeHandle odb, ref GitOid id);
 
+        internal delegate int git_odb_foreach_cb(
+            IntPtr id,
+            IntPtr payload);
+
+        [DllImport(libgit2)]
+        internal static extern int git_odb_foreach(
+            ObjectDatabaseSafeHandle odb,
+            git_odb_foreach_cb cb,
+            IntPtr payload);
+
         [DllImport(libgit2)]
         internal static extern void git_odb_free(IntPtr odb);
 
@@ -687,9 +697,6 @@ namespace LibGit2Sharp.Core
             ReferenceSafeHandle reference,
             [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(Utf8Marshaler))] string newName,
             [MarshalAs(UnmanagedType.Bool)] bool force);
-
-        [DllImport(libgit2)]
-        internal static extern int git_reference_resolve(out ReferenceSafeHandle resolvedReference, ReferenceSafeHandle reference);
 
         [DllImport(libgit2)]
         internal static extern int git_reference_set_target(out ReferenceSafeHandle ref_out, ReferenceSafeHandle reference, ref GitOid id);
@@ -872,7 +879,7 @@ namespace LibGit2Sharp.Core
         internal static extern int git_repository_head_detached(RepositorySafeHandle repo);
 
         [DllImport(libgit2)]
-        internal static extern int git_repository_head_orphan(RepositorySafeHandle repo);
+        internal static extern int git_repository_head_unborn(RepositorySafeHandle repo);
 
         [DllImport(libgit2)]
         internal static extern int git_repository_index(out IndexSafeHandle index, RepositorySafeHandle repo);
@@ -1040,7 +1047,7 @@ namespace LibGit2Sharp.Core
         internal static extern int git_submodule_lookup(
             out SubmoduleSafeHandle reference,
             RepositorySafeHandle repo,
-            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(Utf8Marshaler))] string name);
+            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(FilePathMarshaler))] FilePath name);
 
         internal delegate int submodule_callback(
             IntPtr sm,

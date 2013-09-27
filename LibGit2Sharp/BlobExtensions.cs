@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.IO;
+using System.Text;
 using LibGit2Sharp.Core;
 
 namespace LibGit2Sharp
@@ -9,27 +11,21 @@ namespace LibGit2Sharp
     public static class BlobExtensions
     {
         /// <summary>
-        /// Gets the blob content decoded as UTF-8.
+        /// Gets the blob content decoded with the specified encoding,
+        /// or according to byte order marks, with UTF8 as fallback,
+        /// if <paramref name="encoding"/> is null.
         /// </summary>
         /// <param name="blob">The blob for which the content will be returned.</param>
-        /// <returns>Blob content as UTF-8</returns>
-        public static string ContentAsUtf8(this Blob blob)
+        /// <param name="encoding">The encoding of the text. (default: detected or UTF8)</param>
+        /// <returns>Blob content as text.</returns>
+        public static string ContentAsText(this Blob blob, Encoding encoding = null)
         {
             Ensure.ArgumentNotNull(blob, "blob");
 
-            return Encoding.UTF8.GetString(blob.Content);
-        }
-
-        /// <summary>
-        /// Gets the blob content decoded as Unicode.
-        /// </summary>
-        /// <param name="blob">The blob for which the content will be returned.</param>
-        /// <returns>Blob content as unicode.</returns>
-        public static string ContentAsUnicode(this Blob blob)
-        {
-            Ensure.ArgumentNotNull(blob, "blob");
-
-            return Encoding.Unicode.GetString(blob.Content);
+            using (var reader = new StreamReader(blob.ContentStream, encoding ?? Encoding.UTF8, encoding == null))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
